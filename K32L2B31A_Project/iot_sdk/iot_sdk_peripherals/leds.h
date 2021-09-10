@@ -46,6 +46,16 @@
   *
   */
  void led_off_green();
+ /*!---------------------------------------------------------------------------
+  * @brief apaga led rojo
+  *
+  */
+ void led_on_red();
+ /*!---------------------------------------------------------------------------
+  * @brief apaga led rojo
+  *
+  */
+ void led_off_red();
 /** @} */ // end of leds group
 /** @} */ // end of peripherals group
 
