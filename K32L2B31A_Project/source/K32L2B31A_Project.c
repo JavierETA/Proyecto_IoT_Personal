@@ -20,37 +20,28 @@
 /* TODO: insert other include files here. */
 #include "leds.h"
 #include "sensor_luz.h"
+#include "irq_lptmr0.h"
+#include "botones.h"
 /* TODO: insert other definitions and declarations here. */
-bool auxiliar = 0;
 int contador = 0;
+bool sem;
 
 
 /*
  * @brief   Application entry point.
  */
 //Funcion que cuenta encendido led verde
-bool cont_verde(void){
+void cont_verde(void){
 	++contador;
-	if (contador == 10) {
-		auxiliar = true;
-	}
 	if (contador == 20) {
-		auxiliar = false;
+		toggle_led_red();
 		contador = 0;
-	}
-	return(auxiliar);
-}
-//funcion para producir un retardo
-void delay_block(void){
-	int i = 0 ;
-	for (i= 0; i < 1000000; ++i) {
-		//printf("%d", i);
 	}
 }
 
 int main(void) {
-	bool sem;
 	uint32_t ADC_SenLuz;
+	bool boton1,boton2;
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -59,20 +50,19 @@ int main(void) {
 
     BOARD_InitDebugConsole();
 #endif
-
+    LPTMR_StartTimer(LPTMR0);
     while(1) {
-        led_on_green();
-        delay_block();
-        led_off_green();
-        delay_block();
-        sem = cont_verde();
-        if (sem) {
-			led_on_red();
-		} else {
-			led_off_red();
+    	if (lptmr0_irqCounter) {
+    		toggle_led_green();
+    		cont_verde();
+    		ADC_SenLuz = SenLuzObtenerDatoADC();
+    		printf("ADC Sensor de luz = %u \r\n", ADC_SenLuz);
+    		lptmr0_irqCounter = false;
+    		boton1 = boton1LeerEstado();
+    		boton2 = boton2LeerEstado();
+    		printf("boton1: %u \r\n", boton1);
+    		printf("boton2: %u \r\n", boton2);
 		}
-        ADC_SenLuz = SenLuzObtenerDatoADC();
-        printf("ADC Sensor de luz = %u \r\n", ADC_SenLuz);
     }
     return 0 ;
 }
