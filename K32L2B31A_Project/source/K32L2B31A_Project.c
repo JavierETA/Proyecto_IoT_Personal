@@ -19,6 +19,7 @@
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
 #include "leds.h"
+#include "sensor_luz.h"
 /* TODO: insert other definitions and declarations here. */
 bool auxiliar = 0;
 int contador = 0;
@@ -49,6 +50,7 @@ void delay_block(void){
 
 int main(void) {
 	bool sem;
+	uint32_t ADC_SenLuz;
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -69,6 +71,8 @@ int main(void) {
 		} else {
 			led_off_red();
 		}
+        ADC_SenLuz = SenLuzObtenerDatoADC();
+        printf("ADC Sensor de luz = %u \r\n", ADC_SenLuz);
     }
     return 0 ;
 }
