@@ -40,7 +40,7 @@ void cont_verde(void){
 }
 
 int main(void) {
-	uint32_t ADC_SenLuz;
+	float ADC_SenLuz;
 	bool boton1,boton2;
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -55,8 +55,8 @@ int main(void) {
     	if (lptmr0_irqCounter) {
     		toggle_led_green();
     		cont_verde();
-    		ADC_SenLuz = SenLuzObtenerDatoADC();
-    		printf("ADC Sensor de luz = %u \r\n", ADC_SenLuz);
+    		ADC_SenLuz = SenLuzObtenerDatoLux();
+    		printf("Sensor de luz - Lux= %f \r\n", ADC_SenLuz);
     		lptmr0_irqCounter = false;
     		boton1 = boton1LeerEstado();
     		boton2 = boton2LeerEstado();
