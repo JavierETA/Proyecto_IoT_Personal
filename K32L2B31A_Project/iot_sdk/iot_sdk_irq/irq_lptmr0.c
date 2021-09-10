@@ -1,16 +1,16 @@
-/*! @file : leds.c
+/*! @file : irq_lptmr0.c
  * @author  JAVIER ELIAS TOBON AYUBB
  * @version 1.0.0
- * @date    8/09/2021
- * @brief   Driver para controlar leds de tarjeta FRDM-K32L2B3
+ * @date    10/09/2021
+ * @brief   Driver para interrupcion cada segundo
  * @details
  *
 */
 /*******************************************************************************
  * Includes
  ******************************************************************************/
-#include "leds.h"
-#include "fsl_gpio.h"
+#include "irq_lptmr0.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -29,40 +29,28 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
-
+volatile bool lptmr0_irqCounter = false;
 
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
+ /* LPTMR0_IRQn interrupt handler cada 1 segundo */
+void LPTMR0_IRQHANDLER(void) {
+  uint32_t intStatus;
+  /* Reading all interrupt flags of status register */
+  intStatus = LPTMR_GetStatusFlags(LPTMR0_PERIPHERAL);
+  LPTMR_ClearStatusFlags(LPTMR0_PERIPHERAL, intStatus);
 
+  /* Place your code here */
+  lptmr0_irqCounter = true;
+  /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F
+     Store immediate overlapping exception return operation might vector to incorrect interrupt. */
+  #if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+  #endif
+}
 
 /*******************************************************************************
  * Public Source Code
  ******************************************************************************/
- void led_on_green(){
-	 //encender led verde
-	 GPIO_PinWrite(GPIOD,5,0);
- }
- 
- void led_off_green(){
-	 //apagar led verde
-	 GPIO_PinWrite(GPIOD,5,1);
- }
 
- void led_on_red(){
-	 //encender led verde
-	 GPIO_PinWrite(GPIOE,31,0);
- }
-
- void led_off_red(){
-	 //apagar led verde
-	 GPIO_PinWrite(GPIOE,31,1);
- }
- void toggle_led_green(){
- 	 //cambiar estado led verde
- 	 GPIO_PortToggle(GPIOD, 1U<<5);
- }
- void toggle_led_red(){
- 	 //cambiar estado led verde
- 	 GPIO_PortToggle(GPIOE, 1U<<31);
- }
