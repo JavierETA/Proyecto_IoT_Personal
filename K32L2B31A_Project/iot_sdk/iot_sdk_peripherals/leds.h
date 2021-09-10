@@ -56,6 +56,16 @@
   *
   */
  void led_off_red();
+ /*!---------------------------------------------------------------------------
+  * @brief cambia estado led rojo
+  *
+  */
+ void toggle_led_green();
+ /*!---------------------------------------------------------------------------
+  * @brief cambia estado led verde
+  *
+  */
+ void toggle_led_red();
 /** @} */ // end of leds group
 /** @} */ // end of peripherals group
 
