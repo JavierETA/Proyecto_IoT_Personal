@@ -20,12 +20,25 @@
 /* TODO: insert other include files here. */
 #include "leds.h"
 /* TODO: insert other definitions and declarations here. */
-unsigned int test_global_var=100;
+bool auxiliar = 0;
+int contador = 0;
 
 
 /*
  * @brief   Application entry point.
  */
+//Funcion que cuenta encendido led verde
+bool cont_verde(void){
+	++contador;
+	if (contador == 10) {
+		auxiliar = true;
+	}
+	if (contador == 20) {
+		auxiliar = false;
+		contador = 0;
+	}
+	return(auxiliar);
+}
 //funcion para producir un retardo
 void delay_block(void){
 	int i = 0 ;
@@ -35,7 +48,7 @@ void delay_block(void){
 }
 
 int main(void) {
-
+	bool sem;
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -46,10 +59,16 @@ int main(void) {
 #endif
 
     while(1) {
-    	delay_block();
         led_on_green();
         delay_block();
         led_off_green();
+        delay_block();
+        sem = cont_verde();
+        if (sem) {
+			led_on_red();
+		} else {
+			led_off_red();
+		}
     }
     return 0 ;
 }
