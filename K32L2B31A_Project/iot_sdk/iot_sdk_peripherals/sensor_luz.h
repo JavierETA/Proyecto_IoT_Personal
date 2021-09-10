@@ -40,7 +40,7 @@
  ******************************************************************************/
 //-----------------------------------------------------------------------------
  //Returna el resultado ADC del sensor de luz
- uint32_t SenLuzObtenerDatoADC(void);
+ float SenLuzObtenerDatoLux(void);
 
 /** @} */ // end of sensor de luz group
 /** @} */ // end of PERIPHERALS group

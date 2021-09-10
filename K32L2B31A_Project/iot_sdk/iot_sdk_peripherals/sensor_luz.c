@@ -11,6 +11,7 @@
  ******************************************************************************/
 #include "sensor_luz.h"
 #include "peripherals.h"
+#include "stdio.h"
 
 /*******************************************************************************
  * Definitions
@@ -53,12 +54,15 @@
  * Public Source Code
  ******************************************************************************/
 
-uint32_t SenLuzObtenerDatoADC(void){
+float SenLuzObtenerDatoLux(void){
 	SenLuzIniciarCap();
 	SenLuzEsperarResult();
 	uint32_t resultadoADC;
+	float corrienteADC,Lux;
 	resultadoADC = ADC16_GetChannelConversionValue(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP);
- 	return(resultadoADC);
+	corrienteADC = (13513.5 - (3.3*resultadoADC))/40950000;
+	Lux = (corrienteADC * 9500)/(0.005);
+ 	return(Lux);
 }
 
  
