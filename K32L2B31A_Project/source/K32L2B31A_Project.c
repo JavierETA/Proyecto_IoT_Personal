@@ -18,7 +18,7 @@
 #include "K32L2B31A.h"
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
-
+#include "leds.h"
 /* TODO: insert other definitions and declarations here. */
 unsigned int test_global_var=100;
 
@@ -26,8 +26,15 @@ unsigned int test_global_var=100;
 /*
  * @brief   Application entry point.
  */
+//funcion para producir un retardo
+void delay_block(void){
+	int i = 0 ;
+	for (i= 0; i < 1000000; ++i) {
+		//printf("%d", i);
+	}
+}
+
 int main(void) {
-	int i = 0 ;/* Force the counter to be placed into memory. */
 
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -38,12 +45,11 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
 
-    printf("Hello World\n\r");
-    printf("Prueba variable: %d", test_global_var);
-
     while(1) {
-        i++ ;
-        printf("i: %u\r\n", i);
+    	delay_block();
+        led_on_green();
+        delay_block();
+        led_off_green();
     }
     return 0 ;
 }
