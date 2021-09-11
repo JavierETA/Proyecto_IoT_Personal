@@ -39,7 +39,10 @@ void cont_verde(void){
 	}
 }
 
+
+
 int main(void) {
+	int contador = 0;
 	float ADC_SenLuz;
 	bool boton1,boton2;
     BOARD_InitBootPins();
@@ -52,17 +55,21 @@ int main(void) {
 #endif
     LPTMR_StartTimer(LPTMR0);
     while(1) {
-    	if (lptmr0_irqCounter) {
-    		toggle_led_green();
-    		cont_verde();
+    	boton1 = boton1LeerEstado();
+    	boton2 = boton2LeerEstado();
+    	if (boton2 == false && contador == 0) {
     		ADC_SenLuz = SenLuzObtenerDatoLux();
     		printf("Sensor de luz - Lux= %f \r\n", ADC_SenLuz);
-    		lptmr0_irqCounter = false;
-    		boton1 = boton1LeerEstado();
-    		boton2 = boton2LeerEstado();
+    		contador++;
+    	}
+    	if (lptmr0_irqCounter == 10) {
+    		toggle_led_green();
+    		cont_verde();
     		printf("boton1: %u \r\n", boton1);
     		printf("boton2: %u \r\n", boton2);
-		}
+    		lptmr0_irqCounter = 0;
+    		contador = 0;
+    	}
     }
     return 0 ;
 }
