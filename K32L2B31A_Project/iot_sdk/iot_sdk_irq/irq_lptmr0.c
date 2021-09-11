@@ -29,7 +29,7 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
-volatile bool lptmr0_irqCounter = false;
+volatile uint32_t lptmr0_irqCounter = false;
 
 /*******************************************************************************
  * Private Source Code
@@ -42,7 +42,7 @@ void LPTMR0_IRQHANDLER(void) {
   LPTMR_ClearStatusFlags(LPTMR0_PERIPHERAL, intStatus);
 
   /* Place your code here */
-  lptmr0_irqCounter = true;
+  lptmr0_irqCounter++;
   /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F
      Store immediate overlapping exception return operation might vector to incorrect interrupt. */
   #if defined __CORTEX_M && (__CORTEX_M == 4U)
