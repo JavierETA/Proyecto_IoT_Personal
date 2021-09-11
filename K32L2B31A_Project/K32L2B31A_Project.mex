@@ -704,7 +704,7 @@
                            <setting name="enableLowPower" value="false"/>
                            <setting name="enableContinuousConversion" value="false"/>
                         </struct>
-                        <setting name="adc16_channel_mux_mode" value="kADC16_ChannelMuxA"/>
+                        <setting name="adc16_channel_mux_mode" value="kADC16_ChannelMuxB"/>
                         <struct name="adc16_hardware_compare_config">
                            <setting name="hardwareCompareModeEnable" value="false"/>
                         </struct>
@@ -722,7 +722,7 @@
                         </struct>
                         <array name="adc16_channels_config">
                            <struct name="0">
-                              <setting name="channelName" value="sensor_de_luz"/>
+                              <setting name="channelName" value=""/>
                               <setting name="enableDifferentialConversion" value="false"/>
                               <setting name="channelNumber" value="SE.3"/>
                               <setting name="enableInterruptOnConversionCompleted" value="false"/>
@@ -743,7 +743,7 @@
                            <setting name="prescalerClockSource" value="kLPTMR_PrescalerClock_1"/>
                            <setting name="clockSource" value="BOARD_BootClockRUN"/>
                            <setting name="value" value="kLPTMR_Prescale_Glitch_0"/>
-                           <setting name="timerPeriod" value="1s"/>
+                           <setting name="timerPeriod" value="100ms"/>
                         </struct>
                         <setting name="enableInterrupt" value="true"/>
                         <struct name="interrupt">

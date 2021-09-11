@@ -23,8 +23,6 @@ extern "C" {
 /* Definitions for BOARD_InitPeripherals functional group */
 /* Alias for ADC0 peripheral */
 #define ADC0_PERIPHERAL ADC0
-/* Definition of custom name for ADC0 configuration #0 (channel 3, control group 0) */
-#define ADC0_SENSOR_DE_LUZ 0U
 /* ADC0 interrupt vector ID (number). */
 #define ADC0_IRQN ADC0_IRQn
 /* ADC0 interrupt handler identifier. */
@@ -39,9 +37,9 @@ extern "C" {
 /* Definition of the prescaled clock source frequency */
 #define LPTMR0_INPUT_FREQ 1000UL
 /* Definition of the timer period in us */
-#define LPTMR0_USEC_COUNT 1000000UL
+#define LPTMR0_USEC_COUNT 100000UL
 /* Definition of the timer period in number of ticks */
-#define LPTMR0_TICKS 1000UL
+#define LPTMR0_TICKS 100UL
 /* LPTMR0 interrupt vector ID (number). */
 #define LPTMR0_IRQN LPTMR0_IRQn
 /* LPTMR0 interrupt handler identifier. */

@@ -96,7 +96,7 @@ instance:
       - enableHighSpeed: 'false'
       - enableLowPower: 'false'
       - enableContinuousConversion: 'false'
-    - adc16_channel_mux_mode: 'kADC16_ChannelMuxA'
+    - adc16_channel_mux_mode: 'kADC16_ChannelMuxB'
     - adc16_hardware_compare_config:
       - hardwareCompareModeEnable: 'false'
     - doAutoCalibration: 'false'
@@ -112,7 +112,7 @@ instance:
       - enable_custom_name: 'false'
     - adc16_channels_config:
       - 0:
-        - channelName: 'sensor_de_luz'
+        - channelName: ''
         - enableDifferentialConversion: 'false'
         - channelNumber: 'SE.3'
         - enableInterruptOnConversionCompleted: 'false'
@@ -139,7 +139,7 @@ const adc16_config_t ADC0_config = {
   .enableLowPower = false,
   .enableContinuousConversion = false
 };
-const adc16_channel_mux_mode_t ADC0_muxMode = kADC16_ChannelMuxA;
+const adc16_channel_mux_mode_t ADC0_muxMode = kADC16_ChannelMuxB;
 
 static void ADC0_init(void) {
   /* Initialize ADC16 converter */
@@ -176,7 +176,7 @@ instance:
       - prescalerClockSource: 'kLPTMR_PrescalerClock_1'
       - clockSource: 'BOARD_BootClockRUN'
       - value: 'kLPTMR_Prescale_Glitch_0'
-      - timerPeriod: '1s'
+      - timerPeriod: '100ms'
     - enableInterrupt: 'true'
     - interrupt:
       - IRQn: 'LPTMR0_IRQn'
