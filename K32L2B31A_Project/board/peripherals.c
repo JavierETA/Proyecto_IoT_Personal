@@ -91,12 +91,12 @@ instance:
       - enableAsynchronousClock: 'true'
       - clockDivider: 'kADC16_ClockDivider8'
       - resolution: 'kADC16_ResolutionSE12Bit'
-      - longSampleMode: 'kADC16_LongSampleDisabled'
+      - longSampleMode: 'kADC16_LongSampleCycle24'
       - hardwareAverageMode: 'kADC16_HardwareAverageDisabled'
       - enableHighSpeed: 'false'
       - enableLowPower: 'false'
       - enableContinuousConversion: 'false'
-    - adc16_channel_mux_mode: 'kADC16_ChannelMuxB'
+    - adc16_channel_mux_mode: 'kADC16_ChannelMuxA'
     - adc16_hardware_compare_config:
       - hardwareCompareModeEnable: 'false'
     - doAutoCalibration: 'false'
@@ -117,12 +117,24 @@ instance:
         - channelNumber: 'SE.3'
         - enableInterruptOnConversionCompleted: 'false'
         - channelGroup: '0'
+        - initializeChannel: 'false'
+      - 1:
+        - channelName: ''
+        - enableDifferentialConversion: 'false'
+        - channelNumber: 'SE.26'
+        - enableInterruptOnConversionCompleted: 'false'
+        - channelGroup: '0'
         - initializeChannel: 'true'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
-adc16_channel_config_t ADC0_channelsConfig[1] = {
+adc16_channel_config_t ADC0_channelsConfig[2] = {
   {
     .channelNumber = 3U,
+    .enableDifferentialConversion = false,
+    .enableInterruptOnConversionCompleted = false,
+  },
+  {
+    .channelNumber = 26U,
     .enableDifferentialConversion = false,
     .enableInterruptOnConversionCompleted = false,
   }
@@ -133,13 +145,13 @@ const adc16_config_t ADC0_config = {
   .enableAsynchronousClock = true,
   .clockDivider = kADC16_ClockDivider8,
   .resolution = kADC16_ResolutionSE12Bit,
-  .longSampleMode = kADC16_LongSampleDisabled,
+  .longSampleMode = kADC16_LongSampleCycle24,
   .hardwareAverageMode = kADC16_HardwareAverageDisabled,
   .enableHighSpeed = false,
   .enableLowPower = false,
   .enableContinuousConversion = false
 };
-const adc16_channel_mux_mode_t ADC0_muxMode = kADC16_ChannelMuxB;
+const adc16_channel_mux_mode_t ADC0_muxMode = kADC16_ChannelMuxA;
 
 static void ADC0_init(void) {
   /* Initialize ADC16 converter */
@@ -149,7 +161,7 @@ static void ADC0_init(void) {
   /* Configure channel multiplexing mode */
   ADC16_SetChannelMuxMode(ADC0_PERIPHERAL, ADC0_muxMode);
   /* Initialize channel */
-  ADC16_SetChannelConfig(ADC0_PERIPHERAL, ADC0_CH0_CONTROL_GROUP, &ADC0_channelsConfig[0]);
+  ADC16_SetChannelConfig(ADC0_PERIPHERAL, ADC0_CH1_CONTROL_GROUP, &ADC0_channelsConfig[1]);
 }
 
 /***********************************************************************************************************************

@@ -675,6 +675,11 @@
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ADC0.adc_se.26" description="Signal SE of the channel 26 of the peripheral ADC0 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="ClockOutput" resourceId="LPO_clock" description="LPO clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
@@ -698,13 +703,13 @@
                            <setting name="enableAsynchronousClock" value="true"/>
                            <setting name="clockDivider" value="kADC16_ClockDivider8"/>
                            <setting name="resolution" value="kADC16_ResolutionSE12Bit"/>
-                           <setting name="longSampleMode" value="kADC16_LongSampleDisabled"/>
+                           <setting name="longSampleMode" value="kADC16_LongSampleCycle24"/>
                            <setting name="hardwareAverageMode" value="kADC16_HardwareAverageDisabled"/>
                            <setting name="enableHighSpeed" value="false"/>
                            <setting name="enableLowPower" value="false"/>
                            <setting name="enableContinuousConversion" value="false"/>
                         </struct>
-                        <setting name="adc16_channel_mux_mode" value="kADC16_ChannelMuxB"/>
+                        <setting name="adc16_channel_mux_mode" value="kADC16_ChannelMuxA"/>
                         <struct name="adc16_hardware_compare_config">
                            <setting name="hardwareCompareModeEnable" value="false"/>
                         </struct>
@@ -725,6 +730,14 @@
                               <setting name="channelName" value=""/>
                               <setting name="enableDifferentialConversion" value="false"/>
                               <setting name="channelNumber" value="SE.3"/>
+                              <setting name="enableInterruptOnConversionCompleted" value="false"/>
+                              <setting name="channelGroup" value="0"/>
+                              <setting name="initializeChannel" value="false"/>
+                           </struct>
+                           <struct name="1">
+                              <setting name="channelName" value=""/>
+                              <setting name="enableDifferentialConversion" value="false"/>
+                              <setting name="channelNumber" value="SE.26"/>
                               <setting name="enableInterruptOnConversionCompleted" value="false"/>
                               <setting name="channelGroup" value="0"/>
                               <setting name="initializeChannel" value="true"/>
