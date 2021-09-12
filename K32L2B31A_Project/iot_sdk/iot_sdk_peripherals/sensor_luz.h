@@ -26,7 +26,7 @@
  ******************************************************************************/
 #define SenLuz_ADC16_BASE          ADC0
 #define SenLuz_ADC16_CHANNEL_GROUP 0U
-#define SenLuz_ADC16_USER_CHANNEL  23U /* PTE30, ADC0_SE23 */
+#define SenLuz_ADC16_USER_CHANNEL  3U /* PTE30, ADC0_SE23 */
 /*******************************************************************************
  * External vars
  ******************************************************************************/
@@ -40,7 +40,7 @@
  ******************************************************************************/
 //-----------------------------------------------------------------------------
  //Returna el resultado ADC del sensor de luz
- uint32_t SenLuzObtenerDatoADC(void);
+ float SenLuzObtenerDatoLux(void);
 
 /** @} */ // end of sensor de luz group
 /** @} */ // end of PERIPHERALS group

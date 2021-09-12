@@ -1,15 +1,15 @@
-/*! @file : sensor_luz.c
+/*! @file : sensor_temp.c
  * @author  JAVIER ELIAS TOBON AYUBB
  * @version 1.0.0
  * @date    10/09/2021
- * @brief   Driver para 
+ * @brief   Driver para sensor de temperatura
  * @details
  *
 */
 /*******************************************************************************
  * Includes
  ******************************************************************************/
-#include "sensor_luz.h"
+#include "sensor_temp.h"
 #include "peripherals.h"
 
 /*******************************************************************************
@@ -20,11 +20,12 @@
 /*******************************************************************************
  * Private Prototypes
  ******************************************************************************/
-//Inicia captura por ADC de voltaje generado por sensor de luz
- void SenLuzIniciarCap(void);
+//Inicia captura por ADC de voltaje generado por sensor de temperatura
+ void SenTempIniciarCap(void);
 //-----------------------------------------------------------------------------
 //Espera que el ADC obtenga el resultado
- void SenLuzEsperarResult(void);
+ void SenTempEsperarResult(void);
+
 
 /*******************************************************************************
  * External vars
@@ -39,29 +40,33 @@
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
- void SenLuzIniciarCap(void){
-     ADC16_SetChannelConfig(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP, & ADC0_channelsConfig[0]);
+ void SenTempIniciarCap(void){
+      ADC16_SetChannelConfig(SenTemp_ADC16_BASE, SenTemp_ADC16_CHANNEL_GROUP, & ADC0_channelsConfig[1]);
 
- }
+  }
 
- void SenLuzEsperarResult(void){
- 	while (0U == (kADC16_ChannelConversionDoneFlag & ADC16_GetChannelStatusFlags(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP))){
- 	}
- }
+  void SenTempEsperarResult(void){
+  	while (0U == (kADC16_ChannelConversionDoneFlag & ADC16_GetChannelStatusFlags(SenTemp_ADC16_BASE, SenTemp_ADC16_CHANNEL_GROUP))){
+  	}
+  }
+
 
 /*******************************************************************************
  * Public Source Code
  ******************************************************************************/
 
-float SenLuzObtenerDatoLux(void){
-	SenLuzIniciarCap();
-	SenLuzEsperarResult();
-	uint32_t resultadoADC;
-	float corrienteADC,Lux;
-	resultadoADC = ADC16_GetChannelConversionValue(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP);
-	corrienteADC = (13513.5 - (3.3*resultadoADC))/40950000;
-	Lux = (corrienteADC * 9500)/(0.005);
- 	return(Lux);
-}
-
- 
+  float SenTempObtenerDatoCenti(void){
+  	SenTempIniciarCap();
+  	SenTempEsperarResult();
+  	uint32_t resultadoADC;
+  	float Temp, voltajeADC, m;
+  	resultadoADC = ADC16_GetChannelConversionValue(SenTemp_ADC16_BASE, SenTemp_ADC16_CHANNEL_GROUP);
+  	voltajeADC = (3.0*resultadoADC)/4095;
+  	if(voltajeADC>=0.716){
+  	 	m = 1.646;
+  	}else{
+  	 	m = 1.769;
+  	}
+  	Temp = 25 - ((voltajeADC - 0.716)/m);
+   	return(Temp);
+  }

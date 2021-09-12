@@ -91,7 +91,7 @@ instance:
       - enableAsynchronousClock: 'true'
       - clockDivider: 'kADC16_ClockDivider8'
       - resolution: 'kADC16_ResolutionSE12Bit'
-      - longSampleMode: 'kADC16_LongSampleDisabled'
+      - longSampleMode: 'kADC16_LongSampleCycle24'
       - hardwareAverageMode: 'kADC16_HardwareAverageDisabled'
       - enableHighSpeed: 'false'
       - enableLowPower: 'false'
@@ -112,17 +112,29 @@ instance:
       - enable_custom_name: 'false'
     - adc16_channels_config:
       - 0:
-        - channelName: 'sensor_de_luz'
+        - channelName: ''
         - enableDifferentialConversion: 'false'
         - channelNumber: 'SE.3'
+        - enableInterruptOnConversionCompleted: 'false'
+        - channelGroup: '0'
+        - initializeChannel: 'false'
+      - 1:
+        - channelName: ''
+        - enableDifferentialConversion: 'false'
+        - channelNumber: 'SE.26'
         - enableInterruptOnConversionCompleted: 'false'
         - channelGroup: '0'
         - initializeChannel: 'true'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
-adc16_channel_config_t ADC0_channelsConfig[1] = {
+adc16_channel_config_t ADC0_channelsConfig[2] = {
   {
     .channelNumber = 3U,
+    .enableDifferentialConversion = false,
+    .enableInterruptOnConversionCompleted = false,
+  },
+  {
+    .channelNumber = 26U,
     .enableDifferentialConversion = false,
     .enableInterruptOnConversionCompleted = false,
   }
@@ -133,7 +145,7 @@ const adc16_config_t ADC0_config = {
   .enableAsynchronousClock = true,
   .clockDivider = kADC16_ClockDivider8,
   .resolution = kADC16_ResolutionSE12Bit,
-  .longSampleMode = kADC16_LongSampleDisabled,
+  .longSampleMode = kADC16_LongSampleCycle24,
   .hardwareAverageMode = kADC16_HardwareAverageDisabled,
   .enableHighSpeed = false,
   .enableLowPower = false,
@@ -149,7 +161,7 @@ static void ADC0_init(void) {
   /* Configure channel multiplexing mode */
   ADC16_SetChannelMuxMode(ADC0_PERIPHERAL, ADC0_muxMode);
   /* Initialize channel */
-  ADC16_SetChannelConfig(ADC0_PERIPHERAL, ADC0_CH0_CONTROL_GROUP, &ADC0_channelsConfig[0]);
+  ADC16_SetChannelConfig(ADC0_PERIPHERAL, ADC0_CH1_CONTROL_GROUP, &ADC0_channelsConfig[1]);
 }
 
 /***********************************************************************************************************************
@@ -176,7 +188,7 @@ instance:
       - prescalerClockSource: 'kLPTMR_PrescalerClock_1'
       - clockSource: 'BOARD_BootClockRUN'
       - value: 'kLPTMR_Prescale_Glitch_0'
-      - timerPeriod: '1s'
+      - timerPeriod: '100ms'
     - enableInterrupt: 'true'
     - interrupt:
       - IRQn: 'LPTMR0_IRQn'
