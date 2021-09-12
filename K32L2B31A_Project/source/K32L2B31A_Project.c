@@ -20,6 +20,7 @@
 /* TODO: insert other include files here. */
 #include "leds.h"
 #include "sensor_luz.h"
+#include "sensor_temp.h"
 #include "irq_lptmr0.h"
 #include "botones.h"
 /* TODO: insert other definitions and declarations here. */
@@ -39,8 +40,12 @@ void cont_verde(void){
 	}
 }
 
+
+
 int main(void) {
-	uint32_t ADC_SenLuz;
+	int contador = 0;
+	int contador1 = 0;
+	float ADC_SenLuz, ADC_SenTemp;
 	bool boton1,boton2;
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -52,17 +57,27 @@ int main(void) {
 #endif
     LPTMR_StartTimer(LPTMR0);
     while(1) {
-    	if (lptmr0_irqCounter) {
+    	boton1 = boton1LeerEstado();
+    	boton2 = boton2LeerEstado();
+    	if (boton2 == false && contador == 0) {
+    		ADC_SenLuz = SenLuzObtenerDatoLux();
+    		printf("Sensor de luz - Lux = %f \r\n", ADC_SenLuz);
+    		contador++;
+    	}
+    	if (boton1 == false && contador1 == 0) {
+    	    ADC_SenTemp = SenTempObtenerDatoCenti();
+    	    printf("Sensor de temperatura = %f grados C \r\n", ADC_SenTemp);
+    	    contador1++;
+    	}
+    	if (lptmr0_irqCounter == 10) {
     		toggle_led_green();
     		cont_verde();
-    		ADC_SenLuz = SenLuzObtenerDatoADC();
-    		printf("ADC Sensor de luz = %u \r\n", ADC_SenLuz);
-    		lptmr0_irqCounter = false;
-    		boton1 = boton1LeerEstado();
-    		boton2 = boton2LeerEstado();
     		printf("boton1: %u \r\n", boton1);
     		printf("boton2: %u \r\n", boton2);
-		}
+    		lptmr0_irqCounter = 0;
+    		contador = 0;
+    		contador1 = 0;
+    	}
     }
     return 0 ;
 }
