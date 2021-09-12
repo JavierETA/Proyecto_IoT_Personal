@@ -26,7 +26,7 @@
  ******************************************************************************/
 #define SenLuz_ADC16_BASE          ADC0
 #define SenLuz_ADC16_CHANNEL_GROUP 0U
-#define SenLuz_ADC16_USER_CHANNEL  23U /* PTE30, ADC0_SE23 */
+#define SenLuz_ADC16_USER_CHANNEL  3U /* PTE30, ADC0_SE23 */
 /*******************************************************************************
  * External vars
  ******************************************************************************/
