@@ -66,7 +66,7 @@ const char *lista_ec25_respuesta_at[] = {
 
 
 char buffer_nuevo_comando_recibido[50];
-uint32_t index_buffer_nuevo_comando_recibio = 0;
+uint32_t index_buffer_nuevo_comando_recibido = 0;
 
 
 /*
@@ -78,7 +78,7 @@ void limpiar_buffer_comando(){
 	for (int var = 0; var < 50; ++var) {
 		buffer_nuevo_comando_recibido[var] = 0x00;
 	}
-	index_buffer_nuevo_comando_recibio = 0;
+	index_buffer_nuevo_comando_recibido = 0;
 }
 
 int main(void) {
@@ -102,8 +102,8 @@ int main(void) {
 //    	}
     	if (numerodebytedisponiblesenbuffer() != 0) {
     		nuevoByteLPUART0 = sacarByteBuffCir();
-    		buffer_nuevo_comando_recibido[index_buffer_nuevo_comando_recibio] = nuevoByteLPUART0;
-    		index_buffer_nuevo_comando_recibio++;
+    		buffer_nuevo_comando_recibido[index_buffer_nuevo_comando_recibido] = nuevoByteLPUART0;
+    		index_buffer_nuevo_comando_recibido++;
     		char *puntero_ok;
 
     		if (nuevoByteLPUART0 == '\n') {
