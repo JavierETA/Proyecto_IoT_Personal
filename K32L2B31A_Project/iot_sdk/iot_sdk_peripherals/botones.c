@@ -29,7 +29,7 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
-
+bool boton1,boton2;
 
 /*******************************************************************************
  * Private Source Code
@@ -62,3 +62,17 @@
 	 }
 	 return(resultado);
  }
+
+char Boton1_Presionado(void){
+   return !boton1;
+}
+
+void Key_Task_Init(void){
+  	boton1 = 0;
+  	boton2 = 0;
+ }
+
+void Key_Task_Run(void){
+  	boton1=boton1LeerEstado();
+  	boton2=boton2LeerEstado();
+}

@@ -34,7 +34,7 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
-
+ uint32_t adc_sensor_de_luz;
 
 /*******************************************************************************
  * Private Source Code
@@ -61,7 +61,16 @@ float SenLuzObtenerDatoLux(void){
 	resultadoADC = ADC16_GetChannelConversionValue(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP);
 	corrienteADC = (13513.5 - (3.3*resultadoADC))/40950000;
 	Lux = (corrienteADC * 9500)/(0.005);
- 	return(Lux);
+ 	return(resultadoADC);
+}
+
+
+void SensorLuz_Init(void){
+
+}
+
+void SensorLuz_Task_Run(void){
+	  adc_sensor_de_luz = SenLuzObtenerDatoLux();
 }
 
  

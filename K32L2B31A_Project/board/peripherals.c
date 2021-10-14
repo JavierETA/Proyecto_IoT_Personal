@@ -189,7 +189,7 @@ instance:
       - prescalerClockSource: 'kLPTMR_PrescalerClock_1'
       - clockSource: 'BOARD_BootClockRUN'
       - value: 'kLPTMR_Prescale_Glitch_0'
-      - timerPeriod: '600ms'
+      - timerPeriod: '1000ms'
     - enableInterrupt: 'true'
     - interrupt:
       - IRQn: 'LPTMR0_IRQn'
