@@ -77,6 +77,7 @@ char 		buffer_comando_enviar[SIZE_BUFFER_COMANDO];
 uint32_t 	index_buffer_nuevo_comandio_recibido=0;
 char modemSt;
 static char recibiMsgQtt;
+int8_t bandera = 0;
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
@@ -134,23 +135,24 @@ void Modem_Task_Run(void){
 	Modem_Rta_Run();
 	switch(modemSt){
 	case ST_MOD_IDLE: // IDLE
+
 	break;
 	case ST_MOD_CFG:
 		Modem_Send_Cmd("ATE0\r\n"); 								// ATE0 Quitar ECO
       	//Modem_Rta_Cmd(5,"OK",ST_MOD_CFG_URC,ST_MOD_CFG); //rx OK
-      	Modem_Rta_Cmd(5,"OK",ST_MOD_PWR_OFF,ST_MOD_CFG); //rx OK
+      	Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_PWR_OFF,ST_MOD_CFG); //rx OK
 	break;
 	case ST_MOD_CFG_URC:
 		Modem_Send_Cmd("AT+QURCCFG=\"urcport\",\"uart1\"\r\n");
-		Modem_Rta_Cmd(5,"OK",ST_MOD_CFG_ALL_URC,ST_MOD_CFG_URC);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_CFG_ALL_URC,ST_MOD_CFG_URC);
 	break;
 	case ST_MOD_CFG_ALL_URC:
 		Modem_Send_Cmd("AT+QINDCFG=\"ALL\",1,1\r\n");
-		Modem_Rta_Cmd(5,"OK",ST_MOD_PWR_OFF,ST_MOD_CFG_URC);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_PWR_OFF,ST_MOD_CFG_URC);
 	break;
 	case ST_MOD_PWR_OFF:
 		Modem_Send_Cmd("AT+CFUN=0\r\n"); // Modo Avion				//AT+CFUN=0
-		Modem_Rta_Cmd(5,"OK",ST_MOD_APN,ST_MOD_PWR_OFF); //rx OK
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_APN,ST_MOD_PWR_OFF); //rx OK
  	break;
 	case ST_MOD_APN:
 		buffer_comando_enviar[0] = 0;
@@ -158,49 +160,50 @@ void Modem_Task_Run(void){
 		strcat(buffer_comando_enviar,APN_APP);
 		strcat(buffer_comando_enviar,"\"\r\n");
 		Modem_Send_Cmd(buffer_comando_enviar); //Modem_Send_Cmd("AT+CGDCONT=1,\"IP\",\"internet.comcel.com.co\"\r\n"); //tx "AT+CGDCONT=1,"IP",APN_APP
-		Modem_Rta_Cmd(5,"OK",ST_MOD_PWR_ON,ST_MOD_APN); 	// rx "OK"
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_PWR_ON,ST_MOD_APN); 	// rx "OK"
 	break;
 	case ST_MOD_PWR_ON:
 		Modem_Send_Cmd("AT+CFUN=1\r\n");								//tx "AT+CFUN=1"
-		Modem_Rta_Cmd(5,"OK",ST_MOD_SIM,ST_MOD_PWR_ON); 	//rx "OK"
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_SIM,ST_MOD_PWR_ON); 	//rx "OK"
     break;
  	case ST_MOD_SIM:
  		Modem_Send_Cmd("AT+CPIN?\r\n");									//tx "AT+CPIN?"
- 		Modem_Rta_Cmd(5,"READY",ST_MOD_SIGNAL,ST_MOD_SIM); // rx "READY"
+ 		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"READY",ST_MOD_SIGNAL,ST_MOD_SIM); // rx "READY"
 	break;
 	case ST_MOD_SIGNAL:
 		Modem_Send_Cmd("AT+CSQ\r\n");									//tx "AT+CSQ"
-		Modem_Rta_Cmd(5,"+CSQ",ST_MOD_SEARCHING,ST_MOD_SIGNAL);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"+CSQ",ST_MOD_SEARCHING,ST_MOD_SIGNAL);
 	break;
 	case ST_MOD_SEARCHING:
 		Modem_Send_Cmd("AT+CREG?\r\n");											//tx "AT+CREG?"
-		Modem_Rta_Cmd(5,"0,1",ST_MOD_ACT_CTX,ST_MOD_SEARCHING); 	//rx  "0,1"
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"0,1",ST_MOD_ACT_CTX,ST_MOD_SEARCHING); 	//rx  "0,1"
 	break;
 	case ST_MOD_ACT_CTX:
 		Modem_Send_Cmd("AT+QIACT=1\r\n"); 									//tx "AT+QIACT=1"
-		Modem_Rta_Cmd(5,"OK",ST_MOD_OPEN_MQTT,ST_MOD_ACT_CTX); 	//rx "OK"
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_OPEN_MQTT,ST_MOD_ACT_CTX); 	//rx "OK"
 	break;
 	case ST_MOD_OPEN_MQTT:
 		Modem_Send_Cmd("AT+QMTOPEN=0,\"34.215.212.114\",1883\r\n"); //tx "AT+QMTOPEN=0,"142.93.88.99",1883"
-		Modem_Rta_Cmd(5,"+QMTOPEN: 0,0",ST_MOD_CONN_TOPIC,ST_MOD_OPEN_MQTT);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"+QMTOPEN: 0,0",ST_MOD_CONN_TOPIC,ST_MOD_OPEN_MQTT);
 	break;
 	case ST_MOD_CONN_TOPIC:
 		Modem_Send_Cmd("AT+QMTCONN=0,\"LAB1\"\r\n");	//tx "AT+QMTCONN=0,"TOPICO_APP""
-		Modem_Rta_Cmd(10,"+QMTCONN: 0,0,0",ST_MOD_SUB_TOPIC,ST_MOD_OPEN_MQTT);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"+QMTCONN: 0,0,0",ST_MOD_SUB_TOPIC,ST_MOD_OPEN_MQTT);
 	break;
 	case ST_MOD_SUB_TOPIC:
 		Modem_Send_Cmd("AT+QMTSUB=0 ,1,\"LAB1\",1\r\n");	//tx "AT+QMTCONN=0,"TOPICO_APP""
-		Modem_Rta_Cmd(5,"+QMTSUB: 0,1,0,1",ST_MOD_CONN_PUB,ST_MOD_CONN_TOPIC);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"+QMTSUB: 0,1,0,1",ST_MOD_CONN_PUB,ST_MOD_CONN_TOPIC);
 	break;
 	case ST_MOD_CONN_PUB:
 		Modem_Send_Cmd("AT+QMTPUB=0,0,0,0,\"LAB1\"\r\n");
-		Modem_Rta_Cmd(5,">",ST_MOD_PUBLIC_DAT,ST_MOD_OPEN_MQTT);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,">",ST_MOD_PUBLIC_DAT,ST_MOD_OPEN_MQTT);
 	break;
 	case ST_MOD_PUBLIC_DAT:
 		printf("SLuz:%u",adc_sensor_de_luz);
 		putchar(CNTL_Z);
-		Modem_Rta_Cmd(5,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
-		recibiMsgQtt = 0;
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
+//		Modem_Rta_Cmd(5,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
+//		recibiMsgQtt = 0;
 	break;
 	case ST_ERROR_SIM:
 		// SIM no insertada
@@ -218,21 +221,22 @@ void Modem_Task_Run(void){
 		//notificar error de envio
 		//MQTT_Error(ST_MQTT_ERROR_SEND);
 	break;
-	case ST_MOD_KEEP_ALIVE:
-		Modem_Send_Cmd("AT\r\n");
-		Modem_Rta_Cmd(3, "OK", ST_MOD_CHK_URC, ST_MOD_KEEP_ALIVE);
-	break;
+//	case ST_MOD_KEEP_ALIVE:
+//		Modem_Send_Cmd("AT\r\n");
+//		Modem_Rta_Cmd(3, "OK", ST_MOD_CHK_URC, ST_MOD_KEEP_ALIVE);
+//	break;
 	case ST_MOD_CHK_URC:
-		if(Recibido_URC()){
-			Modem_Check_URC_Run();
-			if(recibiMsgQtt){
-				recibiMsgQtt = 0;
-				modemSt = ST_MOD_KEEP_ALIVE;
-			}
-		}
-		if(Boton1_Presionado()){
-			modemSt = ST_MOD_CONN_PUB;
-		}
+//		if(Recibido_URC()){
+//			Modem_Check_URC_Run();
+//			if(recibiMsgQtt){
+//				recibiMsgQtt = 0;
+//				modemSt = ST_MOD_KEEP_ALIVE;
+//			}
+//		}
+//		if(Boton1_Presionado()){
+//			modemSt = ST_MOD_CONN_PUB;
+//		}
+		bandera = 1;
 	break;
 	}
  }
@@ -327,5 +331,10 @@ char Recibido_URC(void){
 		time2waitEnd_URC = Alarma_Set(10); //tiempo que espera para fin de Rx de URC
 		return 0;
 	}
+}
+
+void enviar_dato_sensor(void){
+	modemSt = ST_MOD_CONN_PUB;
+	bandera = 0;
 }
 

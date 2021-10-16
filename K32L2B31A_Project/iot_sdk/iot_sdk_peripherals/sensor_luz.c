@@ -53,7 +53,7 @@
  * Public Source Code
  ******************************************************************************/
 
-float SenLuzObtenerDatoLux(void){
+uint32_t SenLuzObtenerDatoLux(void){
 	SenLuzIniciarCap();
 	SenLuzEsperarResult();
 	uint32_t resultadoADC;

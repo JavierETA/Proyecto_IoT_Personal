@@ -36,11 +36,12 @@
 /*******************************************************************************
  * External vars
  ******************************************************************************/
-
+extern int8_t bandera;
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
 volatile uint32_t segAct=0;
+uint8_t contadorLuz;
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
@@ -60,6 +61,60 @@ char Alarma_Elapsed(uint32_t time2Test){
 	segAct = lptmr0_irqCounter;
 	if(segAct >= time2Test) return true;
 	else return false;
+}
+
+enum{
+	tx_Valor_Claro,
+	tx_Valor_Oscuro,
+	noTx
+};
+
+uint32_t valorOscuro = 4040;
+uint32_t valorClaro = 3300;
+
+extern uint32_t adc_sensor_de_luz;
+char app4St;
+static uint32_t tiempo_espera;
+
+void nivel_sensor_luz(void){
+	tiempo_espera = Alarma_Set(1);
+	if(Alarma_Elapsed(tiempo_espera) && adc_sensor_de_luz >= 4040){
+		printf("entrando oscuro\r\n");
+		contadorLuz = contadorLuz + 1;
+		if (contadorLuz > 5){
+			app4St = tx_Valor_Oscuro;
+			contadorLuz = 0;
+		}
+	}else if(Alarma_Elapsed(tiempo_espera) && adc_sensor_de_luz <= 3300){
+		printf("entrando claro\r\n");
+		contadorLuz = contadorLuz + 1;
+		if (contadorLuz > 5){
+			app4St = tx_Valor_Claro;
+			contadorLuz = 0;
+		}
+	}else{
+		app4St = noTx;
+	}
+}
+
+void app4_init(){
+	// Codigo inicial
+	app4St = noTx;
+}
+
+void app4_Run_Task(){
+	// Maquina de estado para la app
+	nivel_sensor_luz();
+    switch(app4St){
+		case tx_Valor_Claro:
+			enviar_dato_sensor();
+		break;
+		case tx_Valor_Oscuro:
+			enviar_dato_sensor();
+		break;
+		default:
+		break;
+    }
 }
 
 #define Timer_Init() LPTMR_StartTimer(LPTMR0)
@@ -98,10 +153,14 @@ int main(void) {
     Modem_Init();
     SensorLuz_Init();
     Alarma_Init();
+    app4_init();
     while(1) {
     	Modem_Task_Run();
     	Key_Task_Run();
     	SensorLuz_Task_Run();
+    	if (bandera == 1) {
+			app4_Run_Task();
+		}
     }
     return 0 ;
 }

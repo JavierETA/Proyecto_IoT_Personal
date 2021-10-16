@@ -47,6 +47,7 @@ void Modem_Init(void);
 void Modem_Task_Run(void);
 
 
+void enviar_dato_sensor(void);
 /** @} */ // end of X group
 /** @} */ // end of X group
 
