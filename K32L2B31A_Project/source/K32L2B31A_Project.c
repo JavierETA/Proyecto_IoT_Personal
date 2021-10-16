@@ -45,6 +45,9 @@ uint8_t contadorLuz;
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
+void Alarma_Init(void);
+uint32_t Alarma_Set(uint32_t time2Wait);
+char Alarma_Elapsed(uint32_t time2Test);
 // Inicializa Alarma
 void Alarma_Init(void){
 	segAct = lptmr0_irqCounter;
@@ -77,24 +80,26 @@ char app4St;
 static uint32_t tiempo_espera;
 
 void nivel_sensor_luz(void){
-	tiempo_espera = Alarma_Set(1);
-	if(Alarma_Elapsed(tiempo_espera) && adc_sensor_de_luz >= 4040){
-		printf("entrando oscuro\r\n");
-		contadorLuz = contadorLuz + 1;
-		if (contadorLuz > 5){
-			app4St = tx_Valor_Oscuro;
-			contadorLuz = 0;
+	if(adc_sensor_de_luz >= 4040){
+		if(Alarma_Elapsed(tiempo_espera)){
+			contadorLuz = contadorLuz + 1;
+			if (contadorLuz > 5){
+				app4St = tx_Valor_Oscuro;
+				contadorLuz = 0;
+			}
 		}
-	}else if(Alarma_Elapsed(tiempo_espera) && adc_sensor_de_luz <= 3300){
-		printf("entrando claro\r\n");
-		contadorLuz = contadorLuz + 1;
-		if (contadorLuz > 5){
-			app4St = tx_Valor_Claro;
-			contadorLuz = 0;
+	}else if(adc_sensor_de_luz <= 3300){
+		if(Alarma_Elapsed(tiempo_espera)){
+			contadorLuz = contadorLuz + 1;
+			if (contadorLuz > 5){
+				app4St = tx_Valor_Claro;
+				contadorLuz = 0;
+			}
 		}
 	}else{
 		app4St = noTx;
 	}
+	tiempo_espera = Alarma_Set(1);
 }
 
 void app4_init(){
@@ -108,9 +113,11 @@ void app4_Run_Task(){
     switch(app4St){
 		case tx_Valor_Claro:
 			enviar_dato_sensor();
+			app4St = noTx;
 		break;
 		case tx_Valor_Oscuro:
 			enviar_dato_sensor();
+			app4St = noTx;
 		break;
 		default:
 		break;
