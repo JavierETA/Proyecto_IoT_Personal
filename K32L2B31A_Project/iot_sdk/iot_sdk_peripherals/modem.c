@@ -105,7 +105,8 @@ enum{
 	ST_MOD_ERROR_CX_MQTT,
 	ST_MOD_KEEP_ALIVE,  // manda un AT y espera un OK
 	ST_MOD_CHK_URC,
-	ST_MOD_SUB_TOPIC
+	ST_MOD_SUB_TOPIC,
+	ST_MOD_BANDERA_ON
 };
 
 /*******************************************************************************
@@ -201,7 +202,7 @@ void Modem_Task_Run(void){
 	case ST_MOD_PUBLIC_DAT:
 		printf("SLuz:%f",adc_sensor_de_luz);
 		putchar(CNTL_Z);
-		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
+		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_BANDERA_ON,ST_MOD_CONN_PUB);
 //		Modem_Rta_Cmd(5,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
 //		recibiMsgQtt = 0;
 	break;
@@ -221,29 +222,33 @@ void Modem_Task_Run(void){
 		//notificar error de envio
 		//MQTT_Error(ST_MQTT_ERROR_SEND);
 	break;
-//	case ST_MOD_KEEP_ALIVE:
-//		Modem_Send_Cmd("AT\r\n");
-//		Modem_Rta_Cmd(3, "OK", ST_MOD_CHK_URC, ST_MOD_KEEP_ALIVE);
-//	break;
+	case ST_MOD_KEEP_ALIVE:
+		Modem_Send_Cmd("AT\r\n");
+		Modem_Rta_Cmd(3, "OK", ST_MOD_CHK_URC, ST_MOD_KEEP_ALIVE);
+	break;
 	case ST_MOD_CHK_URC:
-//		if(Recibido_URC()){
-//			Modem_Check_URC_Run();
-//			if(recibiMsgQtt){
-//				recibiMsgQtt = 0;
-//				modemSt = ST_MOD_KEEP_ALIVE;
-//			}
-//		}
-//		if(Boton1_Presionado()){
-//			modemSt = ST_MOD_CONN_PUB;
-//		}
+		if(Recibido_URC()){
+			Modem_Check_URC_Run();
+			if(recibiMsgQtt){
+				recibiMsgQtt = 0;
+				modemSt = ST_MOD_KEEP_ALIVE;
+			}
+		}
+		if(Boton1_Presionado()){
+			modemSt = ST_MOD_CONN_PUB;
+		}
+	break;
+	case ST_MOD_BANDERA_ON:
 		bandera = 1;
+		modemSt = ST_MOD_CHK_URC;
 	break;
 	}
  }
-
+char *RxMqtt;
 char Test_Rta_Modem(char *rta2TestStr){
 	char *puntero_ok;
 	puntero_ok=(char*)(strstr((char*)(&buffer_comando_recibido[0]),rta2TestStr));
+	RxMqtt=(char*)(strstr((char*)(&buffer_comando_recibido[0]),rta2TestStr));
 	if(puntero_ok) return 1;
 	else return 0;
 }
@@ -313,6 +318,15 @@ void Modem_Check_URC_Run(void){
 				 led_off_green();
 			 }
 		 }
+		if (Test_Rta_Modem(" Toff")) {
+//			for (int var = 0; var < 7; ++var) {
+//				printf("%c",RxMqtt[var]);
+//			}
+			if (Test_Rta_Modem("LED Ton")) {
+				printf("%c\r\n",RxMqtt[7]);
+				printf("%c\r\n",RxMqtt[13]);
+			}
+		}
 	}else{  // algun otro URC
 		if(Test_Rta_Modem("OK")){
 
@@ -328,7 +342,7 @@ char Recibido_URC(void){
 		}
 		return 0;
 	}else{
-		time2waitEnd_URC = Alarma_Set(10); //tiempo que espera para fin de Rx de URC
+		time2waitEnd_URC = Alarma_Set(5); //tiempo que espera para fin de Rx de URC
 		return 0;
 	}
 }
