@@ -62,7 +62,7 @@ uint8_t sacarByteBuffCir(void);
  * External vars
  ******************************************************************************/
 
-extern uint32_t adc_sensor_de_luz;
+extern float adc_sensor_de_luz;
 
 /*******************************************************************************
  * Local vars
@@ -199,7 +199,7 @@ void Modem_Task_Run(void){
 		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,">",ST_MOD_PUBLIC_DAT,ST_MOD_OPEN_MQTT);
 	break;
 	case ST_MOD_PUBLIC_DAT:
-		printf("SLuz:%u",adc_sensor_de_luz);
+		printf("SLuz:%f",adc_sensor_de_luz);
 		putchar(CNTL_Z);
 		Modem_Rta_Cmd(TIME_WAIT_RTA_CMD,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);
 //		Modem_Rta_Cmd(5,"OK",ST_MOD_CHK_URC,ST_MOD_CONN_PUB);

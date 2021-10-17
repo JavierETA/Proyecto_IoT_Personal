@@ -26,6 +26,8 @@
 //Espera que el ADC obtenga el resultado
  void SenLuzEsperarResult(void);
 
+ float SenLuzObtenerDatoLux(void);
+
 /*******************************************************************************
  * External vars
  ******************************************************************************/
@@ -34,7 +36,7 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
- uint32_t adc_sensor_de_luz;
+ float adc_sensor_de_luz;
 
 /*******************************************************************************
  * Private Source Code
@@ -53,7 +55,7 @@
  * Public Source Code
  ******************************************************************************/
 
-uint32_t SenLuzObtenerDatoLux(void){
+float SenLuzObtenerDatoLux(void){
 	SenLuzIniciarCap();
 	SenLuzEsperarResult();
 	uint32_t resultadoADC;
@@ -61,7 +63,7 @@ uint32_t SenLuzObtenerDatoLux(void){
 	resultadoADC = ADC16_GetChannelConversionValue(SenLuz_ADC16_BASE, SenLuz_ADC16_CHANNEL_GROUP);
 	corrienteADC = (13513.5 - (3.3*resultadoADC))/40950000;
 	Lux = (corrienteADC * 9500)/(0.005);
- 	return(resultadoADC);
+ 	return(Lux);
 }
 
 

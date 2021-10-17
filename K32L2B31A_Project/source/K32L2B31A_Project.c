@@ -72,15 +72,15 @@ enum{
 	noTx
 };
 
-uint32_t valorOscuro = 4040;
-uint32_t valorClaro = 3300;
+static float valorOscuro = 9.0;
+static float valorClaro = 150.0;
 
-extern uint32_t adc_sensor_de_luz;
+extern float adc_sensor_de_luz;
 char app4St;
 static uint32_t tiempo_espera;
 
 void nivel_sensor_luz(void){
-	if(adc_sensor_de_luz >= 4040){
+	if(adc_sensor_de_luz <= valorOscuro){
 		if(Alarma_Elapsed(tiempo_espera)){
 			contadorLuz = contadorLuz + 1;
 			if (contadorLuz > 5){
@@ -88,7 +88,8 @@ void nivel_sensor_luz(void){
 				contadorLuz = 0;
 			}
 		}
-	}else if(adc_sensor_de_luz <= 3300){
+	}
+	if(adc_sensor_de_luz >= valorClaro){
 		if(Alarma_Elapsed(tiempo_espera)){
 			contadorLuz = contadorLuz + 1;
 			if (contadorLuz > 5){
@@ -96,7 +97,8 @@ void nivel_sensor_luz(void){
 				contadorLuz = 0;
 			}
 		}
-	}else{
+	}
+	if(adc_sensor_de_luz > valorOscuro && adc_sensor_de_luz < valorClaro){
 		app4St = noTx;
 	}
 	tiempo_espera = Alarma_Set(1);
