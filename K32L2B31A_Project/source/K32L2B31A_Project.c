@@ -153,6 +153,7 @@ void app4_Run_Task(){
 		default:
 		break;
     }
+    SecLuz_Task(SecLuz[0] - 0x30, SecLuz[1] - 0x30);
 }
 
 
@@ -200,7 +201,6 @@ int main(void) {
     	SensorLuz_Task_Run();
     	if (bandera == 1) {
 			app4_Run_Task();
-			SecLuz_Task(SecLuz[0] - 0x30, SecLuz[1] - 0x30);
 		}
 
     }
