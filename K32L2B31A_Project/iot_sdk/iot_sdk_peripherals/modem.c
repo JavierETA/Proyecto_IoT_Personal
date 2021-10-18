@@ -130,6 +130,8 @@ char Send_MQTT_Error(void){
 void Modem_Init(void){
 	modemSt = ST_MOD_CFG;
 }
+unsigned char SecLuz[2];
+void SecLuz_Task(uint32_t tiempo1, uint32_t tiempo2);
 
 void Modem_Task_Run(void){
 
@@ -244,7 +246,9 @@ void Modem_Task_Run(void){
 	break;
 	}
  }
+
 char *RxMqtt;
+
 char Test_Rta_Modem(char *rta2TestStr){
 	char *puntero_ok;
 	puntero_ok=(char*)(strstr((char*)(&buffer_comando_recibido[0]),rta2TestStr));
@@ -307,6 +311,7 @@ void Modem_Rta_Run(void){
 	}
 }
 
+extern uint8_t ledapagado;
 void Modem_Check_URC_Run(void){
 	//!!! Recepcion de URCs
 	if(Respuesta_Modem("+QMTRECV")){ // mensaje MQTT
@@ -319,12 +324,11 @@ void Modem_Check_URC_Run(void){
 			 }
 		 }
 		if (Test_Rta_Modem(" Toff")) {
-//			for (int var = 0; var < 7; ++var) {
-//				printf("%c",RxMqtt[var]);
-//			}
 			if (Test_Rta_Modem("LED Ton")) {
-				printf("%c\r\n",RxMqtt[7]);
-				printf("%c\r\n",RxMqtt[13]);
+				SecLuz[0] = RxMqtt[7];
+				SecLuz[1] = RxMqtt[13];
+				led_on_green();
+				ledapagado = 0;
 			}
 		}
 	}else{  // algun otro URC

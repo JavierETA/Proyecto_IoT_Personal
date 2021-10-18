@@ -37,11 +37,14 @@
  * External vars
  ******************************************************************************/
 extern int8_t bandera;
+extern float adc_sensor_de_luz;
+extern unsigned char SecLuz[2];
+
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
 volatile uint32_t segAct=0;
-uint8_t contadorLuz;
+uint8_t contadorLuz, contadorLuz1, contadorLuz2;
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
@@ -74,8 +77,6 @@ enum{
 
 static float valorOscuro = 9.0;
 static float valorClaro = 150.0;
-
-extern float adc_sensor_de_luz;
 char app4St;
 static uint32_t tiempo_espera;
 
@@ -109,6 +110,34 @@ void app4_init(){
 	app4St = noTx;
 }
 
+static uint32_t tiempo_espera1;
+
+
+uint8_t ledapagado;
+void SecLuz_Task(uint32_t tiempo1, uint32_t tiempo2){
+	if(ledapagado == 0){
+		if(Alarma_Elapsed(tiempo_espera1)){
+			contadorLuz1 = contadorLuz1 + 1;
+			if (contadorLuz1 >= tiempo1){
+				ledapagado = 1;
+				led_off_green();
+				contadorLuz1 = 0;
+			}
+		}
+	}
+	if(ledapagado == 1){
+		if(Alarma_Elapsed(tiempo_espera1)){
+				contadorLuz2 = contadorLuz2 + 1;
+				if (contadorLuz2 >= tiempo2){
+					led_on_green();
+					contadorLuz2 = 0;
+					ledapagado = 0;
+				}
+		}
+	}
+	tiempo_espera1 = Alarma_Set(1);
+}
+
 void app4_Run_Task(){
 	// Maquina de estado para la app
 	nivel_sensor_luz();
@@ -125,6 +154,8 @@ void app4_Run_Task(){
 		break;
     }
 }
+
+
 
 #define Timer_Init() LPTMR_StartTimer(LPTMR0)
 
@@ -169,7 +200,9 @@ int main(void) {
     	SensorLuz_Task_Run();
     	if (bandera == 1) {
 			app4_Run_Task();
+			SecLuz_Task(SecLuz[0] - 0x30, SecLuz[1] - 0x30);
 		}
+
     }
     return 0 ;
 }
