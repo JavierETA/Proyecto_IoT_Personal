@@ -26,6 +26,8 @@
 //Espera que el ADC obtenga el resultado
  void SenLuzEsperarResult(void);
 
+ float SenLuzObtenerDatoLux(void);
+
 /*******************************************************************************
  * External vars
  ******************************************************************************/
@@ -34,7 +36,7 @@
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
-
+ float adc_sensor_de_luz;
 
 /*******************************************************************************
  * Private Source Code
@@ -62,6 +64,15 @@ float SenLuzObtenerDatoLux(void){
 	corrienteADC = (13513.5 - (3.3*resultadoADC))/40950000;
 	Lux = (corrienteADC * 9500)/(0.005);
  	return(Lux);
+}
+
+
+void SensorLuz_Init(void){
+
+}
+
+void SensorLuz_Task_Run(void){
+	  adc_sensor_de_luz = SenLuzObtenerDatoLux();
 }
 
  

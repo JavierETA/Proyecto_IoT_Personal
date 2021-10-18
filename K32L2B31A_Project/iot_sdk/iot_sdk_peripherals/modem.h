@@ -1,31 +1,33 @@
-/*! @file : botones.h
+/*! @file : modem.h
  * @author  JAVIER ELIAS TOBON AYUBB
  * @version 1.0.0
- * @date    10/09/2021
- * @brief   Driver para controlar los botones
+ * @date    12/10/2021
+ * @brief   Driver para 
  * @details
  *
  */
-#ifndef IOT_SDK_PERIPHERALS_BOTONES_H_
-#define IOT_SDK_PERIPHERALS_BOTONES_H_
+#ifndef IOT_SDK_PERIPHERALS_MODEM_H_
+#define IOT_SDK_PERIPHERALS_MODEM_H_
 /*******************************************************************************
  * Includes
  ******************************************************************************/
-#include "peripherals.h"
-#include "fsl_gpio.h"
+
 
 /*!
- * @addtogroup PERIPHERALS
+ * @addtogroup X
  * @{
  */
 /*!
- * @addtogroup botones
+ * @addtogroup X
  * @{
  */
 /*******************************************************************************
  * Public Definitions
  ******************************************************************************/
+#define TIME_WAIT_RTA_CMD 2 //[=] Segundos que espera una Respuesta del Modem
+//despues de enviar un comando
 
+#define Modem_Send_Cmd(comandoStr) printf(comandoStr)
 /*******************************************************************************
  * External vars
  ******************************************************************************/
@@ -37,13 +39,16 @@
 /*******************************************************************************
  * Public Prototypes
  ******************************************************************************/
-bool boton1LeerEstado(void);
-bool boton2LeerEstado(void);
+// Incicializa variables y estado inicial del Modem
+// configura y inicia proceso de enviar un primer mensaje
+void Modem_Init(void);
 
-void Key_Task_Init(void);
-void Key_Task_Run(void);
-char Boton1_Presionado(void);
-/** @} */ // end of botones group
-/** @} */ // end of PERIPHERALS group
+// Funcion de estado estable
+void Modem_Task_Run(void);
 
-#endif /* IOT_SDK_PERIPHERALS_BOTONES_H_ */
+
+void enviar_dato_sensor(void);
+/** @} */ // end of X group
+/** @} */ // end of X group
+
+#endif /* IOT_SDK_PERIPHERALS_MODEM_H_ */

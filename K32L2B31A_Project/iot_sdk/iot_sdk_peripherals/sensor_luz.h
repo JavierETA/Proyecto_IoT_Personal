@@ -40,7 +40,8 @@
  ******************************************************************************/
 //-----------------------------------------------------------------------------
  //Returna el resultado ADC del sensor de luz
- float SenLuzObtenerDatoLux(void);
+ void SensorLuz_Init(void);
+ void SensorLuz_Task_Run(void);
 
 /** @} */ // end of sensor de luz group
 /** @} */ // end of PERIPHERALS group

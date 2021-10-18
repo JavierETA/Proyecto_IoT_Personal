@@ -44,7 +44,7 @@
 	 GPIO_PinWrite(GPIOD,5,0);
  }
  
- void led_off_green(){
+void led_off_green(){
 	 //apagar led verde
 	 GPIO_PinWrite(GPIOD,5,1);
  }
