@@ -25,8 +25,8 @@
 #include "irq_lpuart0.h"
 #include "botones.h"
 #include "modem.h"
+#include "app4.h"
 /* TODO: insert other definitions and declarations here. */
-
 
 #define SIZE_BUFFER_COMANDO	105
 /*******************************************************************************
@@ -37,14 +37,11 @@
  * External vars
  ******************************************************************************/
 extern int8_t bandera;
-extern float adc_sensor_de_luz;
-extern unsigned char SecLuz[2];
 
 /*******************************************************************************
  * Local vars
  ******************************************************************************/
 volatile uint32_t segAct=0;
-uint8_t contadorLuz, contadorLuz1, contadorLuz2;
 /*******************************************************************************
  * Private Source Code
  ******************************************************************************/
@@ -68,95 +65,6 @@ char Alarma_Elapsed(uint32_t time2Test){
 	if(segAct >= time2Test) return true;
 	else return false;
 }
-
-enum{
-	tx_Valor_Claro,
-	tx_Valor_Oscuro,
-	noTx
-};
-
-static float valorOscuro = 9.0;
-static float valorClaro = 150.0;
-char app4St;
-static uint32_t tiempo_espera;
-
-void nivel_sensor_luz(void){
-	if(adc_sensor_de_luz <= valorOscuro){
-		if(Alarma_Elapsed(tiempo_espera)){
-			contadorLuz = contadorLuz + 1;
-			if (contadorLuz > 5){
-				app4St = tx_Valor_Oscuro;
-				contadorLuz = 0;
-			}
-		}
-	}
-	if(adc_sensor_de_luz >= valorClaro){
-		if(Alarma_Elapsed(tiempo_espera)){
-			contadorLuz = contadorLuz + 1;
-			if (contadorLuz > 5){
-				app4St = tx_Valor_Claro;
-				contadorLuz = 0;
-			}
-		}
-	}
-	if(adc_sensor_de_luz > valorOscuro && adc_sensor_de_luz < valorClaro){
-		app4St = noTx;
-	}
-	tiempo_espera = Alarma_Set(1);
-}
-
-void app4_init(){
-	// Codigo inicial
-	app4St = noTx;
-}
-
-static uint32_t tiempo_espera1;
-
-
-uint8_t ledapagado;
-void SecLuz_Task(uint32_t tiempo1, uint32_t tiempo2){
-	if(ledapagado == 0){
-		if(Alarma_Elapsed(tiempo_espera1)){
-			contadorLuz1 = contadorLuz1 + 1;
-			if (contadorLuz1 >= tiempo1){
-				ledapagado = 1;
-				led_off_green();
-				contadorLuz1 = 0;
-			}
-		}
-	}
-	if(ledapagado == 1){
-		if(Alarma_Elapsed(tiempo_espera1)){
-				contadorLuz2 = contadorLuz2 + 1;
-				if (contadorLuz2 >= tiempo2){
-					led_on_green();
-					contadorLuz2 = 0;
-					ledapagado = 0;
-				}
-		}
-	}
-	tiempo_espera1 = Alarma_Set(1);
-}
-
-void app4_Run_Task(){
-	// Maquina de estado para la app
-	nivel_sensor_luz();
-    switch(app4St){
-		case tx_Valor_Claro:
-			enviar_dato_sensor();
-			app4St = noTx;
-		break;
-		case tx_Valor_Oscuro:
-			enviar_dato_sensor();
-			app4St = noTx;
-		break;
-		default:
-		break;
-    }
-    SecLuz_Task(SecLuz[0] - 0x30, SecLuz[1] - 0x30);
-}
-
-
 
 #define Timer_Init() LPTMR_StartTimer(LPTMR0)
 
@@ -202,7 +110,6 @@ int main(void) {
     	if (bandera == 1) {
 			app4_Run_Task();
 		}
-
     }
     return 0 ;
 }
